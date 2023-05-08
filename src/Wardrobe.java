@@ -38,14 +38,15 @@ public class Wardrobe {
     public Set<PieceOfClothing> getSetOfClothings() {
 
 
-        // Prints current Piece
+        /*// Prints current Piece
         for(PieceOfClothing pieceOfClothing : setOfClothings){
 
             System.out.println(pieceOfClothing.getColour() + "\n" +
-                                pieceOfClothing.getCategory() + "\n" +
-                                pieceOfClothing.getSize());
-        }
+                    pieceOfClothing.getCategory() + "\n" +
+                    pieceOfClothing.getSize());
+        }*/
 
         return setOfClothings;
     }
+
 }

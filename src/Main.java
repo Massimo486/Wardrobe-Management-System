@@ -1,10 +1,11 @@
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class Main {
 
@@ -40,14 +41,14 @@ public class Main {
         System.out.println("Server is running at Port: 6789");
 
         DatagramSocket socket = new DatagramSocket(6789);
-        byte[] buffer = new byte[1000];
+        byte[] buffer = new byte[5000];
 
         while(true){
 
             DatagramPacket request = new DatagramPacket(buffer, buffer.length);
             socket.receive(request);
 
-            System.out.println(" Request: " + new String(request.getData(), 0, request.getLength()));
+            System.out.println("Request: " + new String(request.getData(), 0, request.getLength()));
 
             String receivedString = new String(request.getData(), 0, request.getLength());
             List<String> receivedList = seperateArg(receivedString);
@@ -59,10 +60,12 @@ public class Main {
                 if (receivedList.get(1).equals("wardrobe1")){
 
                     wardrobe1.addPieceOfClothing(receivedList.get(2), receivedList.get(3), castedSize);
+                    buffer = "New piece of clothing was added!".getBytes(StandardCharsets.UTF_8);
                 }
                 else if(receivedList.get(1).equals("wardrobe2")){
 
                     wardrobe2.addPieceOfClothing(receivedList.get(2), receivedList.get(3), castedSize);
+                    buffer = "New piece of clothing was added!".getBytes(StandardCharsets.UTF_8);
                 }
 
             }
@@ -70,16 +73,28 @@ public class Main {
 
                 if (receivedList.get(1).equals("wardrobe1")){
 
-                    return wardrobe1.getSetOfClothings();
+                    String rep = "";
+                    for(PieceOfClothing pieceOfClothing : wardrobe1.getSetOfClothings()){
+
+                        rep = rep + "\n" + pieceOfClothing.getCategory().toString() + "\n" + pieceOfClothing.getColour().toString() + "\n" + pieceOfClothing.getSize() + "\n";
+                    }
+
+                    buffer = rep.getBytes();
+
                 }
                 else if(receivedList.get(1).equals("wardrobe2")){
 
-                    return wardrobe2.getSetOfClothings();
+                    String rep = "";
+                    for(PieceOfClothing pieceOfClothing : wardrobe2.getSetOfClothings()){
+
+                        rep = rep + "\n" + pieceOfClothing.getCategory().toString() + "\n" + pieceOfClothing.getColour().toString() + "\n" + pieceOfClothing.getSize() + "\n";
+                    }
+
+                    buffer = rep.getBytes();
                 }
             }
 
-
-            DatagramPacket reply = new DatagramPacket(request.getData(), request.getLength(), request.getAddress(), request.getPort());
+            DatagramPacket reply = new DatagramPacket(buffer, buffer.length, request.getAddress(), request.getPort());
             socket.send(reply);
         }
     }
@@ -89,4 +104,5 @@ public class Main {
         List<String> stringToList = Arrays.asList(msg.split(","));
         return stringToList;
     }
+
 }
